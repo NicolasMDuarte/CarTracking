@@ -9,6 +9,7 @@ from PIL import Image
 def get_date_taken(path):
     return Image.open(path)._getexif()[36867]
 
+data = ''
 l_xStart = -1
 l_yStart = -1
 l_xEnd = -1
@@ -21,7 +22,6 @@ c_valMax = -1
 valMax_last = -1
 imagensTemplate = [r'.\Project\images#\carUnicoJojo1.png', 
                    r'.\Project\images#\carUnicoJojo2.png',
-                   r'.\Project\images#\carUnicoJojo3.png',
                    r'.\Project\images#\carUnicoJojo4.png',
                    r'.\Project\images#\carUnicoJojo5.png']
                    
@@ -53,8 +53,9 @@ except FileNotFoundError:
    sheet.column_dimensions["B"].width = 15
    sheet.column_dimensions["C"].width = 120
 
-   data = get_date_taken(filename)
+data = get_date_taken(filename)
 i = 0
+
 while(i < len(imagensTemplate)):
    #Open template and get canny
    template = cv2.imread(imagensTemplate[i])
@@ -86,8 +87,8 @@ while(i < len(imagensTemplate)):
       print(f'c_valMax: {c_valMax}') #VALMAX É A COMPATIBILIDADE COM O TEMPLATE
       if l_valMax >= 0:
          if c_valMax == valMax_last:
-            print(f'Quantidade {contador}')
             contador = contador - 1
+            print(f'Quantidade {contador}')
             valMax_last = -1
             break
 
@@ -119,12 +120,15 @@ while(i < len(imagensTemplate)):
       main_image = cv2.ellipse(main_image, (x_coordinate, y_coordinate), (round((x_end - x_start)/1.7), round((y_end - y_start)/1.7)), 0.0, 0.0, 360.0, (255, 0, 0), -1)
       
       main_image_resized = imutils.resize(main_image, width = int(500))
-      #cv2.imshow('Template Found', main_image_resized)
-      #cv2.waitKey(0)
+      
+      #testa uma por uma
+      cv2.imshow('Template Found', main_image_resized)
+      cv2.waitKey(0)
       
    i = i + 1
 
-arquivo = filename['#'+2:len(filename)]
+local = filename.find('#')
+arquivo = filename[local+2:len(filename)]
 sheet.append([data, contador, arquivo])
 
 workbook.save(r".\Project\Resultados.xlsx")
