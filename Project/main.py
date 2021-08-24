@@ -11,27 +11,31 @@ from PIL import Image # Imagem
 from PIL import *
 from datetime import datetime
 from PIL import Image
- 
+
 def imgDate(fn):
-    std_fmt = '%Y:%m:%d %H:%M:%S.%f'
-    tags = [(36867, 37521),  # (DateTimeOriginal, SubsecTimeOriginal)
-            (36868, 37522),  # (DateTimeDigitized, SubsecTimeDigitized)
-            (306, 37520), ]  # (DateTime, SubsecTime)
-    exif = Image.open(fn)._getexif()
- 
-    for t in tags:
-        dat = exif.get(t[0])
-        sub = exif.get(t[1], 0)
- 
-        # PIL.PILLOW_VERSION >= 3.0 returns a tuple
-        dat = dat[0] if type(dat) == tuple else dat
-        sub = sub[0] if type(sub) == tuple else sub
-        if dat != None: break
- 
-    if dat == None: return None
-    full = '{}.{}'.format(dat, sub)
-    T = datetime.strptime(full, std_fmt)
-    #T = time.mktime(time.strptime(dat, '%Y:%m:%d %H:%M:%S')) + float('0.%s' % sub)
+    T = None
+    try:
+        std_fmt = '%Y:%m:%d %H:%M:%S.%f'
+        tags = [(36867, 37521),  # (DateTimeOriginal, SubsecTimeOriginal)
+                (36868, 37522),  # (DateTimeDigitized, SubsecTimeDigitized)
+                (306, 37520), ]  # (DateTime, SubsecTime)
+        exif = Image.open(fn)._getexif()
+    
+        for t in tags:
+            dat = exif.get(t[0])
+            sub = exif.get(t[1], 0)
+    
+            # PIL.PILLOW_VERSION >= 3.0 returns a tuple
+            dat = dat[0] if type(dat) == tuple else dat
+            sub = sub[0] if type(sub) == tuple else sub
+            if dat != None: break
+    
+        if dat == None: return None
+        full = '{}.{}'.format(dat, sub)
+        T = datetime.strptime(full, std_fmt)
+        #T = time.mktime(time.strptime(dat, '%Y:%m:%d %H:%M:%S')) + float('0.%s' % sub)
+    except:
+        None
     return T
 
 car_classifier = cv2.CascadeClassifier(r'Project\haarcascade_car.xml')
@@ -79,13 +83,13 @@ for filename in filenames:
         sheet.column_dimensions["B"].width = 15
         sheet.column_dimensions["C"].width = 120
 
-        data = imgDate(filename)
-        local = filename.find('#')
-        arquivo = filename[local+2:len(filename)]
-        # Registra resultado no arquivo Excel
-        sheet.append([data, qtdCarros, arquivo])
-        # Salva
-        workbook.save(r".\Project\Resultados.xlsx")
+    data = imgDate(filename)
+    local = filename.find('#')
+    arquivo = filename[local+2:len(filename)]
+    # Registra resultado no arquivo Excel
+    sheet.append([data, qtdCarros, arquivo])
+    # Salva
+    workbook.save(r".\Project\Resultados.xlsx")
     print(qtdCarros)
 
 #cv2.imshow('Cars', gray_exib)
