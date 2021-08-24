@@ -88,7 +88,7 @@ for filename in filenames:
         workbook.save(r".\Project\Resultados.xlsx")
     print(qtdCarros)
 
-cv2.imshow('Cars', gray_exib)
+#cv2.imshow('Cars', gray_exib)
 cv2.waitKey(0)
 cv2.destroyAllWindows
 
