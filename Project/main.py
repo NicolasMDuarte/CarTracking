@@ -38,10 +38,13 @@ def imgDate(fn):
         None
     return T
 
+qualAgr = 0
 car_classifier = cv2.CascadeClassifier(r'Project\haarcascade_car.xml')
 foldername = filedialog.askdirectory()
 filenames = os.listdir(foldername)
+qtdTotalImagens = len(filenames)
 for filename in filenames:
+    qualAgr = qualAgr + 1
     qtdCarros = 0
     filename = foldername + "/" + filename
     cap = cv2.imread(filename)
@@ -81,7 +84,7 @@ for filename in filenames:
         sheet["C1"] = "Nome do Arquivo"
         sheet.column_dimensions["A"].width = 30
         sheet.column_dimensions["B"].width = 15
-        sheet.column_dimensions["C"].width = 120
+        sheet.column_dimensions["C"].width = 60
 
     data = imgDate(filename)
     local = filename.find('#')
@@ -90,7 +93,8 @@ for filename in filenames:
     sheet.append([data, qtdCarros, arquivo])
     # Salva
     workbook.save(r".\Project\Resultados.xlsx")
-    print(qtdCarros)
+    print("Progresso: " + str(qualAgr) + "/" + str(qtdTotalImagens))
+    print("Quantidade de carros encontrada: " + str(qtdCarros))
 
 #cv2.imshow('Cars', gray_exib)
 cv2.waitKey(0)
